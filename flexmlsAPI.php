@@ -13,8 +13,9 @@ class flexmlsAPI {
 	private $api_secret = null;
 	private $ch = null;
 	private $debug_log;
-	private $debug_mode = false;
+	private $debug_mode = true;
 	private $application_name = null;
+	private $api_version = "v1";
 
 
 	function __construct($key, $secret) {
@@ -36,8 +37,6 @@ class flexmlsAPI {
 			curl_setopt($this->ch, CURLOPT_STDERR, $this->debug_log);
 		}
 
-		// issue initial authentication request
-		$this->Authenticate();
 	}
 
 
@@ -71,9 +70,9 @@ class flexmlsAPI {
 
 	function GetContacts($tags = "") {
 
-		$endpoint = "/v1/contacts";
+		$endpoint = "/{$this->api_version}/contacts";
 		if (!empty($tags)) {
-			$endpoint = "/v1/contacts/tags/".rawurlencode($tags);
+			$endpoint = "/{$this->api_version}/contacts/tags/".rawurlencode($tags);
 		}
 
 		$result = $this->MakeAPIRequest("GET", $endpoint, array(), array(), $auth = false);
@@ -87,7 +86,7 @@ class flexmlsAPI {
 
 
 	function GetStandardFields() {
-		$result = $this->MakeAPIRequest("GET", "/v1/standardfields", array(), array(), $auth = false);
+		$result = $this->MakeAPIRequest("GET", "/{$this->api_version}/standardfields", array(), array(), $auth = false);
 
 		if ($result === false) {
 			return false;
@@ -114,7 +113,7 @@ class flexmlsAPI {
 			$args['LocationValue'] = $location_value;
 		}
 
-		$result = $this->MakeAPIRequest("GET", "/v1/marketstatistics/{$type}", $args, $data = array(), $auth = false);
+		$result = $this->MakeAPIRequest("GET", "/{$this->api_version}/marketstatistics/{$type}", $args, $data = array(), $auth = false);
 
 		if ($result === false) {
 			return false;
@@ -128,7 +127,7 @@ class flexmlsAPI {
 	function Authenticate($force = false) {
 
 		if ($this->last_token == null || $force == true) {
-			$result = $this->MakeAPIRequest("POST", "/v1/session", array(), array(), $auth = true, $force);
+			$result = $this->MakeAPIRequest("POST", "/{$this->api_version}/session", array(), array(), $auth = true, $force);
 
 			if ($result === false) {
 				return false;
@@ -145,13 +144,13 @@ class flexmlsAPI {
 
 		$data = array('Contacts' => array($contact_data));
 
-		$result = $this->MakeAPIRequest("POST", "/v1/contacts", $args, array(), $auth = false);
+		$result = $this->MakeAPIRequest("POST", "/{$this->api_version}/contacts", $args, $data, $auth = false);
 
 		if ($result === false) {
 			return false;
 		}
 
-		return $result;
+		return $result[0];
 	}
 
 
@@ -159,7 +158,7 @@ class flexmlsAPI {
 
 		$args = array();
 
-		$result = $this->MakeAPIRequest("GET", "/v1/connect/prefs", $args, array(), $auth = false);
+		$result = $this->MakeAPIRequest("GET", "/{$this->api_version}/connect/prefs", $args, array(), $auth = false);
 
 		if ($result === false) {
 			return false;
@@ -178,7 +177,7 @@ class flexmlsAPI {
 
 		$args = array();
 
-		$result = $this->MakeAPIRequest("GET", "/v1/propertytypes", $args, array(), $auth = false);
+		$result = $this->MakeAPIRequest("GET", "/{$this->api_version}/propertytypes", $args, array(), $auth = false);
 
 		if ($result === false) {
 			return false;
@@ -196,7 +195,7 @@ class flexmlsAPI {
 
 	function GetListingOpenHouses($id) {
 
-		$result = $this->MakeAPIRequest("GET", "/v1/listings/{$id}/openhouses", array(), array(), $auth = false);
+		$result = $this->MakeAPIRequest("GET", "/{$this->api_version}/listings/{$id}/openhouses", array(), array(), $auth = false);
 
 		if ($result === false) {
 			return false;
@@ -209,7 +208,7 @@ class flexmlsAPI {
 
 	function GetListingPhotos($id) {
 
-		$result = $this->MakeAPIRequest("GET", "/v1/listings/{$id}/photos", array(), array(), $auth = false);
+		$result = $this->MakeAPIRequest("GET", "/{$this->api_version}/listings/{$id}/photos", array(), array(), $auth = false);
 
 		if ($result === false) {
 			return false;
@@ -222,7 +221,7 @@ class flexmlsAPI {
 
 	function GetListings($args = array()) {
 
-		$result = $this->MakeAPIRequest("GET", "/v1/listings", $args, array(), $auth = false);
+		$result = $this->MakeAPIRequest("GET", "/{$this->api_version}/listings", $args, array(), $auth = false);
 
 		if ($result === false) {
 			return false;
@@ -234,7 +233,7 @@ class flexmlsAPI {
 
 	function GetMyListings($args = array()) {
 
-		$result = $this->MakeAPIRequest("GET", "/v1/my/listings", $args, array(), $auth = false);
+		$result = $this->MakeAPIRequest("GET", "/{$this->api_version}/my/listings", $args, array(), $auth = false);
 
 		if ($result === false) {
 			return false;
@@ -254,7 +253,7 @@ class flexmlsAPI {
 			$args['tags'] = $this->clean_comma_list($tags);
 		}
 
-		$result = $this->MakeAPIRequest("GET", "/v1/idxlinks", $args, array(), $auth = false);
+		$result = $this->MakeAPIRequest("GET", "/{$this->api_version}/idxlinks", $args, array(), $auth = false);
 
 		if ($result === false) {
 			return false;
@@ -269,7 +268,7 @@ class flexmlsAPI {
 
 		$args = array();
 
-		$result = $this->MakeAPIRequest("GET", "/v1/system", $args, array(), $auth = false);
+		$result = $this->MakeAPIRequest("GET", "/{$this->api_version}/system", $args, array(), $auth = false);
 
 		if ($result === false) {
 			return false;
@@ -364,7 +363,7 @@ class flexmlsAPI {
 			}
 		}
 		else {
-			curl_setopt($this->ch, CURLOPT_POST, 0); 
+			curl_setopt($this->ch, CURLOPT_POST, 0);
 		}
 
 		$request_headers .= "User-Agent: flexmls API PHP Client/0.1\r\n";
@@ -372,7 +371,7 @@ class flexmlsAPI {
 			$request_headers .= "flexmlsApi-User-Agent: {$this->application_name}\r\n";
 		}
 
-		curl_setopt($this->ch, CURLOPT_HTTPHEADER, array($request_headers));
+		curl_setopt($this->ch, CURLOPT_HTTPHEADER, array(trim($request_headers)));
 
 		$response_body = curl_exec($this->ch);
 
