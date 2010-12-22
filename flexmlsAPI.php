@@ -29,6 +29,7 @@ class flexmlsAPI {
 		curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($this->ch, CURLOPT_TIMEOUT, 0);
 		curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, false);
+		curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, false);
 
 		// enable logging if we're in debug mode
 		if ($this->debug_mode == true) {
@@ -358,9 +359,7 @@ class flexmlsAPI {
 			// put the built parameter key/values as the body of the POST request
 			$request_headers .= "Content-Type: application/json\r\n";
 			curl_setopt($this->ch, CURLOPT_POST, 1);
-			if (isset($post_body) && !empty($post_body)) {
-				curl_setopt($this->ch, CURLOPT_POSTFIELDS, $post_body);
-			}
+			curl_setopt($this->ch, CURLOPT_POSTFIELDS, $post_body);
 		}
 		else {
 			curl_setopt($this->ch, CURLOPT_POST, 0);
