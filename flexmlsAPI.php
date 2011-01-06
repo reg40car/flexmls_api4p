@@ -301,7 +301,7 @@ class flexmlsAPI {
 		// start with the basic part of the security string and add to it as we go
 		$sec_string  = "{$this->api_secret}ApiKey{$this->api_key}";
 
-		$post_data = "";
+		$post_body = "";
 
 		if ($method == "POST" && count($data) > 0) {
 			// the request is to post some JSON data back to the API (like adding a contact)
@@ -345,11 +345,19 @@ class flexmlsAPI {
 		$full_url = $http_proto . $this->api_base . $uri;
 
 		// take the parameter key/values and put them into a URL-like structure.  key=value&key2=value2& etc.
-		$query_string = http_build_query($http_parameters);
+		$query_string = "";
+		foreach ($http_parameters as $k => $v) {
+			if (!empty($query_string)) {
+				$query_string .= "&";
+			}
+			$query_string .= $k .'='. rawurlencode($v);
+		}
 
 		if (!empty($query_string)) {
 			$full_url .= '?' . $query_string;
 		}
+
+		echo $full_url . "\n\n";
 		
 		$request_headers = "";
 
@@ -377,6 +385,8 @@ class flexmlsAPI {
 		if ($this->debug_mode == true) {
 			fwrite($this->debug_log, $response_body ."\n");
 		}
+
+		echo $response_body . "\n\n";
 		
 		// start handling the response
 		$json = json_decode(utf8_encode($response_body), true);
@@ -393,7 +403,7 @@ class flexmlsAPI {
 		}
 
 		if ( array_key_exists('Pagination', $json['D']) ) {
-			$this->last_count = $json['D']['Pagination']['Count'];
+			$this->last_count = $json['D']['Pagination']['TotalRows'];
 		}
 
 		if ( $json['D']['Success'] == true) {
