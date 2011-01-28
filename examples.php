@@ -3,7 +3,7 @@
 require_once("flexmlsAPI.php");
 
 // set up the initial connection with our API key and secret
-$api = new flexmlsAPI("idx_demo_key", "TopSecret");
+$api = new flexmlsAPI("api_key_goes_here", "api_secret_goes_here");
 
 // set an ApplicationName which identifies us
 $api->SetApplicationName("PHPAPIExamples/1.0");
