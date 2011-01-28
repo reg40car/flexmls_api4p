@@ -5,7 +5,7 @@ class flexmlsAPI {
 	private $api_base = "api.flexmls.com";
 	public $last_error_code = null;
 	public $last_error_mess = null;
-	public $last_count = null;
+	public $last_count = 0;
 	public $api_roles = null;
 	private $last_token = null;
 	private $last_token_expire = null;
@@ -13,7 +13,7 @@ class flexmlsAPI {
 	private $api_secret = null;
 	private $ch = null;
 	private $debug_log;
-	private $debug_mode = true;
+	private $debug_mode = false;
 	private $application_name = null;
 	private $api_version = "v1";
 
@@ -375,7 +375,7 @@ class flexmlsAPI {
 
 		$request_headers .= "User-Agent: flexmls API PHP Client/0.1\r\n";
 		if (!empty($this->application_name)) {
-			$request_headers .= "flexmlsApi-User-Agent: {$this->application_name}\r\n";
+			$request_headers .= "X-flexmlsApi-User-Agent: {$this->application_name}\r\n";
 		}
 
 		curl_setopt($this->ch, CURLOPT_HTTPHEADER, array(trim($request_headers)));
