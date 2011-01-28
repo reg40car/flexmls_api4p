@@ -5,7 +5,7 @@ A PHP wrapper for the flexmls REST API.
 
 Documentation
 -------------
-For full information on the API, see http://documentation-url-goes-here.com
+For full information on the API, see  http://www.flexmls.com/developers
 
 
 Usage Examples
